@@ -51,17 +51,6 @@ def ExampleFunction(img,threshold=50):
 					img[i,j] = 0;
 	return img
 
-"""
-N_Trials = 100
-start = time.time()
-for i in range(N_Trials):
-	Function1(test_img)
-diff = time.time()-start
-
-print("Results for Benchmark 1: %f s; Time Per Image %f s" % (diff, diff/N_Trials))
-#Pool(4).map(ExampleFunction,[test_img]*N_Trials) #How to use Pool
-"""
-
 def Function1(img,threshold=50):
 	return
 
@@ -75,4 +64,23 @@ def Function3(img,threshold=50):
 	elevated_point = np.where(img > threshold)
 	img[elevated_point] *= np.vectorize(CheckNeighbours)(elevated_point[0],elevated_point[1])
 	return img
+
+
+# Andrew's wrappers for his code
+from basic import basic
+def andrew_basic(img, threshold=50):
+	return basic(img, threshold)
+
+
+# Benchmarking Code:
+'''
+N_Trials = 100
+start = time.time()
+for i in range(N_Trials):
+	Function1(test_img)
+diff = time.time()-start
+
+print("Results for Benchmark 1: %f s; Time Per Image %f s" % (diff, diff/N_Trials))
+#Pool(4).map(ExampleFunction,[test_img]*N_Trials) #How to use Pool
+'''
 
