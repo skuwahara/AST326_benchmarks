@@ -18,15 +18,13 @@ def gen_neighbours(img, x, y):
 		
 	return coordinates
 			
-def neighbours_elevated(neighbours, img, threshold):
-	for i in neighbours:
-		if(img[i] > threshold/2.0):	
-			return 1
+def neighbour_elevated(neighbour, img, threshold):
+	if(img[neighbour] > threshold/4.0):	
+		return 1
 	return 0
 
-def filter_out_neighbours(img, neighbours):
-	for i in neighbours:
-		img[i] = 0.0
+def filter_out_neighbour(img, neighbour):
+	img[neighbour] = 0.0
 	return img
 	
 #Basic Algorithm O(n^2)
@@ -39,16 +37,37 @@ def basic(img, threshold=50):
 		for y in range(0, height):
 			if(img[x,y] > (threshold) ):
 				neighbours = gen_neighbours(img, x, y)
-				if(neighbours_elevated(neighbours, img, threshold)):
-					img = filter_out_neighbours(img, neighbours)
+				for i in neighbours:
+					if(neighbour_elevated(i, img, threshold)):
+						img = filter_out_neighbour(img, i)
 			
 	return img
 
 # Testing
+# Easy way to demo is to change the scaling in neighbour elevated
 def unit_test():
 	test_img = np.load("test_img.npy")
 	filtered_image = basic(test_img)
 
+	x = 50
+	y = 100
+	q = 50
+
+	plt.figure(1)
+	plt.subplot(211)
+	plt.title("Test Img")
+	plt.xlim(x, x+q)
+	plt.ylim(y, y+q)
+	plt.imshow(test_img, interpolation="none", cmap='Greys_r', vmin=0)
+	plt.colorbar()
+	
+	plt.subplot(212)
+	plt.title("Filtered Image")
+	plt.xlim(x, x+q)
+	plt.ylim(y, y+q)
+	plt.imshow(filtered_image, interpolation="none", cmap='Greys_r', vmin= 0)
+	plt.colorbar()
+	plt.show()
 	
 	return
 
