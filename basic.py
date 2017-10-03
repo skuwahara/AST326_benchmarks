@@ -23,8 +23,9 @@ def neighbour_elevated(neighbour, img, threshold):
 		return 1
 	return 0
 
-def filter_out_neighbour(img, neighbour):
-	img[neighbour] = 0.0
+def filter_out(img, neighbours):
+	for i in neighbours:
+		img[i] = 0.0
 	return img
 	
 #Basic Algorithm O(n^2)
@@ -39,7 +40,8 @@ def basic(img, threshold=50):
 				neighbours = gen_neighbours(img, x, y)
 				for i in neighbours:
 					if(neighbour_elevated(i, img, threshold)):
-						img = filter_out_neighbour(img, i)
+						img = filter_out(img, neighbours)
+						break
 			
 	return img
 
@@ -71,4 +73,4 @@ def unit_test():
 	
 	return
 
-unit_test()
+#unit_test()
