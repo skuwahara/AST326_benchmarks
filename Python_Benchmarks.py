@@ -23,11 +23,14 @@ All benchmarks will be evaluated over 100 trials of the same image.
 #imports
 import numpy as np
 import time
+from multiprocessing.pool import ThreadPool
+from multiprocessing.pool import Pool
+from collections import deque
 
 #Load Test Image (Already Dark Current Subtracted)
 test_img = np.load("test_img.npy")
 
-#Example Function
+#Example Function ~0.32s (0.10 with Pool)
 def ExampleFunction(img,threshold=50):
 	X = img.shape[0]-1
 	Y = img.shape[1]-1
@@ -48,7 +51,6 @@ def ExampleFunction(img,threshold=50):
 					img[i,j] = 0;
 	return img
 
-#Example Benchmark (~30s)
 """
 N_Trials = 100
 start = time.time()
@@ -57,6 +59,7 @@ for i in range(N_Trials):
 diff = time.time()-start
 
 print("Results for Benchmark 1: %f s; Time Per Image %f s" % (diff, diff/N_Trials))
+#Pool(4).map(ExampleFunction,[test_img]*N_Trials) #How to use Pool
 """
 
 def Function1(img,threshold=50):
@@ -64,17 +67,12 @@ def Function1(img,threshold=50):
 
 def Function2(img,threshold=50):
 	return
-
+ 
+# ~0.0050s, (~0.0017s with Pool)
 def Function3(img,threshold=50):
-	return
-
-
-
-
-
-
-
-
-
-
+	def CheckNeighbours(x,y):
+		return np.count_nonzero(img[max(0,x-1):min(964,x+2),max(0,y-1):min(1288,y+2)] > threshold/2) < 2
+	elevated_point = np.where(img > threshold)
+	img[elevated_point] *= np.vectorize(CheckNeighbours)(elevated_point[0],elevated_point[1])
+	return img
 
